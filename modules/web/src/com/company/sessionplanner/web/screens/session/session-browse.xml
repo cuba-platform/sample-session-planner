@@ -17,7 +17,7 @@
     <dialogMode height="600"
                 width="800"/>
     <layout
-            spacing="true">
+            spacing="true" expand="sessionsTab">
         <filter id="filter"
                 applyTo="sessionsTable"
                 dataLoader="sessionsDl">
