@@ -9,4 +9,10 @@
         <property name="startDate"/>
         <property name="speaker" view="_minimal"/>
     </view>
+    <view entity="sessionplanner_Speaker" name="speaker-with-photo-edit-view" extends="_local">
+        <property name="photo" view="_base"/>
+    </view>
+    <view entity="sessionplanner_Speaker" name="speaker-with-photo-browse-view" extends="_local">
+        <property name="photo" view="_base"/>
+    </view>
 </views>

@@ -1,14 +1,16 @@
 
 buildscript {
-    ext.cubaVersion = '7.1.2'
+    ext.cubaVersion = '7.2-SNAPSHOT'
     repositories {
         maven {
-            url 'https://dl.bintray.com/cuba-platform/main'
-            
+            mavenLocal()
+            url 'https://repo.cuba-platform.com/content/groups/work'
+            credentials {
+                username(rootProject.hasProperty('repoUser') ? rootProject['repoUser'] : 'cuba')
+                password(rootProject.hasProperty('repoPass') ? rootProject['repoPass'] : 'cuba123')
+            }
         }
-        jcenter()
 
-        
     }
     dependencies {
         classpath "com.haulmont.gradle:cuba-plugin:$cubaVersion"
@@ -38,9 +40,10 @@ cuba {
 
 dependencies {
     appComponent("com.haulmont.cuba:cuba-global:$cubaVersion")
+    appComponent('com.haulmont.addon.restapi:restapi-global:7.2-SNAPSHOT')
 }
 
-def hsql = 'org.hsqldb:hsqldb:2.4.1'
+def postgres = 'org.postgresql:postgresql:42.2.5'
 
 configure([globalModule, coreModule, webModule]) {
     apply(plugin: 'java')
@@ -86,8 +89,8 @@ configure(coreModule) {
     dependencies {
         compile(globalModule)
         compileOnly(servletApi)
-        jdbc(hsql)
-        testRuntime(hsql)
+        jdbc(postgres)
+        testRuntime(postgres)
     }
 
     task cleanConf(description: 'Cleans up conf directory') {
@@ -107,19 +110,19 @@ configure(coreModule) {
     }
 
     task createDb(dependsOn: assembleDbScripts, description: 'Creates local database', type: CubaDbCreation) {
-        dbms = 'hsql'
-        host = 'localhost:9010'
-        dbName = 'sessionplanner-dP3vEvcey'
-        dbUser = 'sa'
-        dbPassword = ''
+        dbms = 'postgres'
+        host = 'localhost'
+        dbName = 'sessionplanner'
+        dbUser = 'cuba'
+        dbPassword = 'cuba'
     }
 
     task updateDb(dependsOn: assembleDbScripts, description: 'Updates local database', type: CubaDbUpdate) {
-        dbms = 'hsql'
-        host = 'localhost:9010'
-        dbName = 'sessionplanner-dP3vEvcey'
-        dbUser = 'sa'
-        dbPassword = ''
+        dbms = 'postgres'
+        host = 'localhost'
+        dbName = 'sessionplanner'
+        dbUser = 'cuba'
+        dbPassword = 'cuba'
     }
 }
 
@@ -171,6 +174,7 @@ configure(webModule) {
     }
 }
 
+
 task undeploy(type: Delete, dependsOn: ":${modulePrefix}-web:cleanConf") {
     delete("$cuba.tomcat.dir/shared")
     delete("$cuba.tomcat.dir/webapps/${modulePrefix}-core")
@@ -188,3 +192,9 @@ task restart(dependsOn: ['stop', ":${modulePrefix}-core:deploy", ":${modulePrefi
     }
 }
 
+task buildUberJar(type: CubaUberJarBuilding) {
+    coreJettyEnvPath = 'modules/core/web/META-INF/jetty-env.xml'
+    webPort = 5000
+    singleJar = true
+    appProperties = ['cuba.automaticDatabaseUpdate': true]
+}
