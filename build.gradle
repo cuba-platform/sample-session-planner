@@ -41,6 +41,7 @@ cuba {
 dependencies {
     appComponent("com.haulmont.cuba:cuba-global:$cubaVersion")
     appComponent('com.haulmont.addon.restapi:restapi-global:7.2-SNAPSHOT')
+    appComponent('com.haulmont.addon.cubaaws:cubaaws-global:0.1-SNAPSHOT')
 }
 
 def postgres = 'org.postgresql:postgresql:42.2.5'
@@ -66,10 +67,8 @@ configure([globalModule, coreModule, webModule]) {
 
 configure(globalModule) {
     dependencies {
-        if (!JavaVersion.current().isJava8()) {
-            runtime('javax.xml.bind:jaxb-api:2.3.1')
-            runtime('org.glassfish.jaxb:jaxb-runtime:2.3.1')
-        }
+        runtime('javax.xml.bind:jaxb-api:2.3.1')
+        runtime('org.glassfish.jaxb:jaxb-runtime:2.3.1')
     }
 
     entitiesEnhancing {
@@ -112,7 +111,7 @@ configure(coreModule) {
     task createDb(dependsOn: assembleDbScripts, description: 'Creates local database', type: CubaDbCreation) {
         dbms = 'postgres'
         host = 'localhost'
-        dbName = 'sessionplanner'
+        dbName = 'cuba'
         dbUser = 'cuba'
         dbPassword = 'cuba'
     }
@@ -120,7 +119,7 @@ configure(coreModule) {
     task updateDb(dependsOn: assembleDbScripts, description: 'Updates local database', type: CubaDbUpdate) {
         dbms = 'postgres'
         host = 'localhost'
-        dbName = 'sessionplanner'
+        dbName = 'cuba'
         dbUser = 'cuba'
         dbPassword = 'cuba'
     }
