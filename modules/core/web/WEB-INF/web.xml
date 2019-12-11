@@ -10,7 +10,7 @@
         <param-value>
             classpath:com/company/sessionplanner/app.properties
             /WEB-INF/local.app.properties
-            "file:${catalina.base}/conf/app-core/local.app.properties"
+            "file:${catalina.base}/conf/planner-core/local.app.properties"
         </param-value>
     </context-param>
     <!--Application components-->
