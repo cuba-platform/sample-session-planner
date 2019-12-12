@@ -193,7 +193,14 @@ task restart(dependsOn: ['stop', ":${modulePrefix}-core:deploy", ":${modulePrefi
 
 task buildUberJar(type: CubaUberJarBuilding) {
     coreJettyEnvPath = 'modules/core/web/META-INF/jetty-env.xml'
-    webPort = 5000
+    webPort = 8080
     singleJar = true
+    appProperties = ['cuba.automaticDatabaseUpdate': true]
+}
+
+task buildWar(type: CubaWarBuilding) {
+    includeContextXml = true
+    includeJdbcDriver = true
+    singleWar = false
     appProperties = ['cuba.automaticDatabaseUpdate': true]
 }
