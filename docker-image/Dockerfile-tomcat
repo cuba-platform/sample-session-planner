@@ -5,11 +5,11 @@ ENV DEPLOY_DIR $CATALINA_HOME/webapps/
 RUN rm -rf $DEPLOY_DIR/*
 
 #Preparing default app home folder
-RUN mkdir $DEPLOY_DIR/planner-home
+RUN mkdir $CATALINA_HOME/work/planner-home
 
 #Setting environment variables
 ENV spring.profiles.active=docker
-ENV app.home=$DEPLOY_DIR/planner-home
+ENV JAVA_OPTS="-Dapp.home=$CATALINA_HOME/work/planner-home"
 
 #Deploying applications to tomcat
 COPY planner.war $DEPLOY_DIR
