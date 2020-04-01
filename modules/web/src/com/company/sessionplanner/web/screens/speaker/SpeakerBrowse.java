@@ -9,6 +9,4 @@ import com.company.sessionplanner.entity.Speaker;
 @LoadDataBeforeShow
 public class SpeakerBrowse extends StandardLookup<Speaker> {
 
-
-
 }

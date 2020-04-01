@@ -9,6 +9,7 @@ import com.haulmont.cuba.gui.screen.*;
 import com.company.sessionplanner.entity.Session;
 
 import javax.inject.Inject;
+import java.util.Date;
 
 @UiController("sessionplanner_Session.browse")
 @UiDescriptor("session-browse.xml")
@@ -26,7 +27,7 @@ public class SessionBrowse extends StandardLookup<Session> {
     private Notifications notifications;
 
     @Subscribe("sessionsCalendar")
-    private void onSessionsCalendarCalendarEventClick(Calendar.CalendarEventClickEvent event) {
+    private void onSessionsCalendarCalendarEventClick(Calendar.CalendarEventClickEvent<Date> event) {
         Screen screen = screenBuilders.editor(Session.class, this)
                 .editEntity((Session) event.getEntity())
                 .withLaunchMode(OpenMode.DIALOG).build();
@@ -37,9 +38,9 @@ public class SessionBrowse extends StandardLookup<Session> {
     }
 
     @Subscribe("sessionsCalendar")
-    private void onSessionsCalendarCalendarEventMove(Calendar.CalendarEventMoveEvent event) {
+    private void onSessionsCalendarCalendarEventMove(Calendar.CalendarEventMoveEvent<Date> event) {
 
-        Session session = ((EntityCalendarEvent<Session>)event.getCalendarEvent()).getEntity();
+        Session session = ((EntityCalendarEvent<Session, Date>)event.getCalendarEvent()).getEntity();
 
         if (!sessionService.rescheduleSession(session, event.getNewStart())) {
             notifications.create(Notifications.NotificationType.WARNING)
@@ -50,7 +51,5 @@ public class SessionBrowse extends StandardLookup<Session> {
         getScreenData().loadAll();
 
     }
-
-
 
 }

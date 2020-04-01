@@ -4,9 +4,6 @@
     <view entity="sessionplanner_Session" name="session-browse-view" extends="_local">
         <property name="speaker" view="_minimal"/>
     </view>
-    <view entity="sessionplanner_Session" name="session-edit-view" extends="_minimal">
-        <property name="topic"/>
-        <property name="startDate"/>
-        <property name="speaker" view="_minimal"/>
+    <view entity="sessionplanner_Session" name="session-edit-view" extends="session-browse-view">
     </view>
 </views>
