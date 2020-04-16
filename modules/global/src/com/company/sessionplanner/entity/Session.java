@@ -5,10 +5,16 @@ import com.haulmont.cuba.core.entity.StandardEntity;
 import com.haulmont.cuba.core.entity.annotation.Lookup;
 import com.haulmont.cuba.core.entity.annotation.LookupType;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-import java.time.temporal.ChronoUnit;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @NamePattern("%s|description")
 @Table(name = "SESSIONPLANNER_SESSION")
@@ -20,16 +26,13 @@ public class Session extends StandardEntity {
     @Column(name = "TOPIC", nullable = false)
     protected String topic;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @NotNull
     @Column(name = "START_DATE", nullable = false)
-    protected Date startDate;
+    protected @NotNull LocalDateTime startDate;
 
-    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "END_DATE")
-    protected Date endDate;
+    protected LocalDateTime endDate;
 
-    @Lookup(type = LookupType.DROPDOWN, actions = {"lookup"})
+    @Lookup(type = LookupType.DROPDOWN, actions = "lookup")
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "SPEAKER_ID")
@@ -37,6 +40,22 @@ public class Session extends StandardEntity {
 
     @Column(name = "DESCRIPTION", length = 2000)
     protected String description;
+
+    public void setStartDate(LocalDateTime startDate) {
+        this.startDate = startDate;
+    }
+
+    public LocalDateTime getStartDate() {
+        return startDate;
+    }
+
+    public void setEndDate(LocalDateTime endDate) {
+        this.endDate = endDate;
+    }
+
+    public LocalDateTime getEndDate() {
+        return endDate;
+    }
 
     public String getDescription() {
         return description;
@@ -54,22 +73,6 @@ public class Session extends StandardEntity {
         this.speaker = speaker;
     }
 
-    public Date getEndDate() {
-        return endDate;
-    }
-
-    public void setEndDate(Date endDate) {
-        this.endDate = endDate;
-    }
-
-    public Date getStartDate() {
-        return startDate;
-    }
-
-    public void setStartDate(Date startDate) {
-        this.startDate = startDate;
-    }
-
     public String getTopic() {
         return topic;
     }
@@ -84,7 +87,7 @@ public class Session extends StandardEntity {
         endDate = calculateEndDate(startDate);
     }
 
-    public static Date calculateEndDate(Date startDate) {
-        return Date.from(startDate.toInstant().plus(1, ChronoUnit.HOURS));
+    public static LocalDateTime calculateEndDate(LocalDateTime startDate) {
+        return startDate.plusHours(1);
     }
 }
