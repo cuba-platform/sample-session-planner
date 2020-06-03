@@ -5,31 +5,25 @@
         messagesPack="com.company.sessionplanner.web.screens.session">
     <data>
         <instance id="sessionDc"
-                  class="com.company.sessionplanner.entity.Session"
-                  view="session-edit-view">
+                  class="com.company.sessionplanner.entity.Session">
+            <view extends="_local">
+                <property name="speaker" view="_minimal"/>
+                <property name="endDate"/>
+            </view>
             <loader/>
         </instance>
-        <collection id="speakersDc" class="com.company.sessionplanner.entity.Speaker" view="_minimal">
-            <loader id="speakersLc">
-                <query>
-                    <![CDATA[select e from sessionplanner_Speaker e]]>
-                </query>
-            </loader>
-        </collection>
     </data>
-    <dialogMode height="380"
-                width="400"/>
+    <dialogMode height="auto"
+                width="auto"/>
     <layout expand="editActions" spacing="true">
         <form id="form" dataContainer="sessionDc">
             <column width="250px">
                 <textField id="topicField" property="topic"/>
+                <pickerField id="speakerField" property="speaker"/>
                 <dateField id="startDateField" property="startDate"/>
-                <lookupPickerField id="speakerField" optionsContainer="speakersDc" property="speaker">
-                    <actions>
-                        <action id="lookup" type="picker_lookup"/>
-                    </actions>
-                </lookupPickerField>
+                <textField id="durationField" property="duration"/>
                 <textArea id="descriptionField" property="description"/>
+                <dateField id="endDateField" property="endDate"/>
             </column>
         </form>
         <hbox id="editActions" spacing="true">

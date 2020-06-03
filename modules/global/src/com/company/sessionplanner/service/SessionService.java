@@ -7,5 +7,5 @@ import java.time.LocalDateTime;
 public interface SessionService {
     String NAME = "sessionplanner_SessionService";
 
-    boolean rescheduleSession(Session session, LocalDateTime newStartDate);
+    Session rescheduleSession(Session session, LocalDateTime newStartDate);
 }

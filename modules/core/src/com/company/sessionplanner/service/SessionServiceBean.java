@@ -2,11 +2,11 @@ package com.company.sessionplanner.service;
 
 import com.company.sessionplanner.entity.Session;
 import com.haulmont.cuba.core.global.DataManager;
-import com.haulmont.cuba.core.global.LoadContext;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 @Service(SessionService.NAME)
 public class SessionServiceBean implements SessionService {
@@ -15,28 +15,24 @@ public class SessionServiceBean implements SessionService {
     private DataManager dataManager;
 
     @Override
-    public boolean rescheduleSession(Session session, LocalDateTime newStartDate) {
+    public Session rescheduleSession(Session session, LocalDateTime newStartDate) {
 
-        LocalDateTime newEndDate = Session.calculateEndDate(newStartDate);
+        LocalDateTime dayStart = newStartDate.truncatedTo(ChronoUnit.DAYS).withHour(8);
+        LocalDateTime dayEnd = newStartDate.truncatedTo(ChronoUnit.DAYS).withHour(19);
 
-        LoadContext<Session> loadContext = LoadContext.create(Session.class);
-        loadContext.setQueryString("select s from sessionplanner_Session s where " +
-                "s.startDate < :newEndDate and s.endDate > :newStartDate " +
+        Long sessionsSameTime = dataManager.loadValue("select count(s) from sessionplanner_Session s " +
+                "where (s.startDate between :dayStart and :dayEnd) " +
                 "and s.speaker = :speaker " +
-                "and s.id <> :sessionId")
-                .setParameter("newStartDate", newStartDate)
-                .setParameter("newEndDate", newEndDate)
-                .setParameter("speaker", session.getSpeaker())
-                .setParameter("sessionId", session.getId());
-
-        long sessionsSameTime = dataManager.getCount(loadContext);
-
-        if (sessionsSameTime == 0) {
-            session.setStartDate(newStartDate);
-            dataManager.commit(session);
-            return true;
+                "and s.id <> :sessionId", Long.class)
+                .parameter("dayStart", dayStart)
+                .parameter("dayEnd", dayEnd)
+                .parameter("speaker", session.getSpeaker())
+                .parameter("sessionId", session.getId())
+                .one();
+        if (sessionsSameTime >= 2) {
+            return session;
         }
-
-        return false;
+        session.setStartDate(newStartDate);
+        return dataManager.commit(session);
     }
 }

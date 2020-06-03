@@ -9,6 +9,11 @@ import com.company.sessionplanner.entity.Session;
 @LoadDataBeforeShow
 public class SessionEdit extends StandardEditor<Session> {
 
+    @Subscribe
+    public void onInitEntity(InitEntityEvent<Session> event) {
+        event.getEntity().setDuration(1);
+    }
+
 
 
 }

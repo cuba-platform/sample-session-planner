@@ -5,12 +5,15 @@ import com.haulmont.cuba.core.entity.StandardEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Index;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 
 @NamePattern("%s %s|firstName,lastName")
-@Table(name = "SESSIONPLANNER_SPEAKER")
+@Table(name = "SESSIONPLANNER_SPEAKER", indexes = {
+        @Index(name = "IDX_SESSIONPLANNER_SPEAKER_LAST_NAME", columnList = "LAST_NAME")
+})
 @Entity(name = "sessionplanner_Speaker")
 public class Speaker extends StandardEntity {
     private static final long serialVersionUID = -785326450121099162L;
