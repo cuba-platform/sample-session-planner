@@ -29,9 +29,9 @@ create table SESSIONPLANNER_SESSION (
     --
     TOPIC varchar(255) not null,
     START_DATE timestamp not null,
-    END_DATE timestamp,
+    DURATION integer not null,
     SPEAKER_ID varchar(36) not null,
-    DESCRIPTION varchar(2000),
+    DESCRIPTION longvarchar,
     --
     primary key (ID)
 )^

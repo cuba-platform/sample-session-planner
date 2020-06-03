@@ -1,22 +1,22 @@
 package com.company.sessionplanner.entity;
 
+import com.haulmont.chile.core.annotations.MetaProperty;
 import com.haulmont.chile.core.annotations.NamePattern;
 import com.haulmont.cuba.core.entity.StandardEntity;
-import com.haulmont.cuba.core.entity.annotation.Lookup;
-import com.haulmont.cuba.core.entity.annotation.LookupType;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 import java.time.LocalDateTime;
 
-@NamePattern("%s|description")
+@NamePattern("%s|topic")
 @Table(name = "SESSIONPLANNER_SESSION")
 @Entity(name = "sessionplanner_Session")
 public class Session extends StandardEntity {
@@ -29,17 +29,26 @@ public class Session extends StandardEntity {
     @Column(name = "START_DATE", nullable = false)
     protected @NotNull LocalDateTime startDate;
 
-    @Column(name = "END_DATE")
-    protected LocalDateTime endDate;
+    @NotNull
+    @Column(name = "DURATION", nullable = false)
+    private @Positive Integer duration;
 
-    @Lookup(type = LookupType.DROPDOWN, actions = "lookup")
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "SPEAKER_ID")
     protected Speaker speaker;
 
-    @Column(name = "DESCRIPTION", length = 2000)
+    @Lob
+    @Column(name = "DESCRIPTION")
     protected String description;
+
+    public Integer getDuration() {
+        return duration;
+    }
+
+    public void setDuration(Integer duration) {
+        this.duration = duration;
+    }
 
     public void setStartDate(LocalDateTime startDate) {
         this.startDate = startDate;
@@ -47,14 +56,6 @@ public class Session extends StandardEntity {
 
     public LocalDateTime getStartDate() {
         return startDate;
-    }
-
-    public void setEndDate(LocalDateTime endDate) {
-        this.endDate = endDate;
-    }
-
-    public LocalDateTime getEndDate() {
-        return endDate;
     }
 
     public String getDescription() {
@@ -81,13 +82,10 @@ public class Session extends StandardEntity {
         this.topic = topic;
     }
 
-    @PrePersist
-    @PreUpdate
-    public void updateEndDate() {
-        endDate = calculateEndDate(startDate);
+    @Transient
+    @MetaProperty(related = {"startDate", "duration"})
+    public LocalDateTime getEndDate() {
+        return (startDate != null && duration != null) ? startDate.plusHours(duration) : null;
     }
 
-    public static LocalDateTime calculateEndDate(LocalDateTime startDate) {
-        return startDate.plusHours(1);
-    }
 }
