@@ -5,8 +5,11 @@
         messagesPack="com.company.sessionplanner.web.screens.session">
     <data readOnly="true">
         <collection id="sessionsDc"
-                    class="com.company.sessionplanner.entity.Session"
-                    view="session-browse-view">
+                    class="com.company.sessionplanner.entity.Session">
+            <view extends="_local">
+                <property name="speaker" view="_minimal"/>
+                <property name="endDate"/>
+            </view>
             <loader id="sessionsDl">
                 <query>
                     <![CDATA[select e from sessionplanner_Session e]]>
@@ -24,13 +27,13 @@
             <properties include=".*"/>
         </filter>
         <tabSheet id="sessionsTab">
-            <tab id="calendarTab" caption="Sessions Calendar" margin="true,false,false,false" spacing="true"
+            <tab id="calendarTab" caption="msg://calendarTab.caption" margin="true,false,false,false" spacing="true"
                  expand="sessionsCalendar">
                 <calendar id="sessionsCalendar" dataContainer="sessionsDc" startDateProperty="startDate"
                           endDateProperty="endDate" captionProperty="topic" descriptionProperty="description"
-                firstVisibleHourOfDay="8" lastVisibleHourOfDay="18" navigationButtonsVisible="true"/>
+                firstVisibleHourOfDay="8" lastVisibleHourOfDay="19" navigationButtonsVisible="true"/>
             </tab>
-            <tab id="tableTab" caption="Sessions Table" margin="true,false,false,false" spacing="true">
+            <tab id="tableTab" caption="msg://tableTab.caption" margin="true,false,false,false" spacing="true">
                 <groupTable id="sessionsTable"
                                     width="100%"
                                     dataContainer="sessionsDc">
@@ -42,9 +45,10 @@
                     <columns>
                         <column id="topic"/>
                         <column id="startDate"/>
-                        <column id="endDate"/>
+                        <column id="duration"/>
                         <column id="speaker"/>
                         <column id="description"/>
+                        <column id="endDate"/>
                     </columns>
                     <rowsCount/>
                     <buttonsPanel id="buttonsPanel"

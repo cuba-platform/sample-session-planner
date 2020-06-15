@@ -10,20 +10,14 @@
         <param-value>
             classpath:com/company/sessionplanner/app.properties
             /WEB-INF/local.app.properties
-            "file:${catalina.base}/conf/planner-core/local.app.properties"
+            "file:${app.home}/local.app.properties"
         </param-value>
     </context-param>
     <!--Application components-->
     <context-param>
         <param-name>appComponents</param-name>
-        <param-value>com.haulmont.cuba com.haulmont.addon.restapi com.haulmont.addon.cubaaws</param-value>
+        <param-value>com.haulmont.cuba</param-value>
     </context-param>
-<!--
-    <context-param>
-        <param-name>spring.profiles.active</param-name>
-        <param-value>dev</param-value>
-    </context-param>
--->
     <listener>
         <listener-class>com.haulmont.cuba.core.sys.AppContextLoader</listener-class>
     </listener>

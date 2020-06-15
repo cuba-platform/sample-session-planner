@@ -1,18 +1,4 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <views xmlns="http://schemas.haulmont.com/cuba/view.xsd">
 
-    <view entity="sessionplanner_Session" name="session-browse-view" extends="_local">
-        <property name="speaker" view="_minimal"/>
-    </view>
-    <view entity="sessionplanner_Session" name="session-edit-view" extends="_minimal">
-        <property name="topic"/>
-        <property name="startDate"/>
-        <property name="speaker" view="_minimal"/>
-    </view>
-    <view entity="sessionplanner_Speaker" name="speaker-with-photo-edit-view" extends="_local">
-        <property name="photo" view="_base"/>
-    </view>
-    <view entity="sessionplanner_Speaker" name="speaker-with-photo-browse-view" extends="_local">
-        <property name="photo" view="_base"/>
-    </view>
 </views>

@@ -10,7 +10,6 @@ create table SESSIONPLANNER_SPEAKER (
     DELETED_BY varchar(50),
     --
     FIRST_NAME varchar(255) not null,
-    PHOTO_ID uuid,
     LAST_NAME varchar(255),
     EMAIL varchar(255) not null,
     --
@@ -30,9 +29,9 @@ create table SESSIONPLANNER_SESSION (
     --
     TOPIC varchar(255) not null,
     START_DATE timestamp not null,
-    END_DATE timestamp,
+    DURATION integer not null,
     SPEAKER_ID uuid not null,
-    DESCRIPTION varchar(2000),
+    DESCRIPTION longvarchar,
     --
     primary key (ID)
 )^

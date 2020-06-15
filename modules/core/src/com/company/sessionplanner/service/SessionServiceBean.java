@@ -5,7 +5,8 @@ import com.haulmont.cuba.core.global.DataManager;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 @Service(SessionService.NAME)
 public class SessionServiceBean implements SessionService {
@@ -14,27 +15,24 @@ public class SessionServiceBean implements SessionService {
     private DataManager dataManager;
 
     @Override
-    public boolean rescheduleSession(Session session, Date newStartDate) {
+    public Session rescheduleSession(Session session, LocalDateTime newStartDate) {
 
-        Date newEndDate = Session.calculateEndDate(newStartDate);
+        LocalDateTime dayStart = newStartDate.truncatedTo(ChronoUnit.DAYS).withHour(8);
+        LocalDateTime dayEnd = newStartDate.truncatedTo(ChronoUnit.DAYS).withHour(19);
 
-        int sessionsSameTime = dataManager.load(Session.class)
-                .query("select s from sessionplanner_Session s where " +
-                        "s.startDate < :newEndDate and s.endDate > :newStartDate " +
-                        "and s.speaker = :speaker " +
-                        "and s.id <> :sessionId")
-                .parameter("newStartDate", newStartDate)
-                .parameter("newEndDate", newEndDate)
+        Long sessionsSameTime = dataManager.loadValue("select count(s) from sessionplanner_Session s " +
+                "where (s.startDate between :dayStart and :dayEnd) " +
+                "and s.speaker = :speaker " +
+                "and s.id <> :sessionId", Long.class)
+                .parameter("dayStart", dayStart)
+                .parameter("dayEnd", dayEnd)
                 .parameter("speaker", session.getSpeaker())
                 .parameter("sessionId", session.getId())
-                .list().size();
-
-        if (sessionsSameTime == 0) {
-            session.setStartDate(newStartDate);
-            dataManager.commit(session);
-            return true;
+                .one();
+        if (sessionsSameTime >= 2) {
+            return session;
         }
-
-        return false;
+        session.setStartDate(newStartDate);
+        return dataManager.commit(session);
     }
 }
