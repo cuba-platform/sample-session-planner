@@ -6,7 +6,8 @@
     <data>
         <instance id="speakerDc"
                   class="com.company.sessionplanner.entity.Speaker"
-                  view="speaker-with-photo-edit-view">
+        >
+            <view extends="_local"/>
             <loader/>
         </instance>
     </data>
@@ -18,8 +19,6 @@
                 <textField id="firstNameField" property="firstName"/>
                 <textField id="lastNameField" property="lastName"/>
                 <textField id="emailField" property="email"/>
-                <image id="photoImage" dataContainer="speakerDc" property="photo" scaleMode="CONTAIN"/>
-                <upload id="photo" property="photo" dataContainer="speakerDc" fileStoragePutMode="IMMEDIATE"/>
             </column>
         </form>
         <hbox id="editActions" spacing="true">

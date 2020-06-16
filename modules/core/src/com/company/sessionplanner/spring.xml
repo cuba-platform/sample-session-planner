@@ -5,8 +5,4 @@
     <!-- Annotation-based beans -->
     <context:component-scan base-package="com.company.sessionplanner"/>
 
-    <beans profile="amazon">
-        <bean name="cuba_FileStorage" class="com.haulmont.addon.cubaaws.s3.AmazonS3FileStorage"/>
-    </beans>
-
 </beans>

@@ -31,7 +31,7 @@ create table SESSIONPLANNER_SESSION (
     START_DATE timestamp not null,
     DURATION integer not null,
     SPEAKER_ID uuid not null,
-    DESCRIPTION longvarchar,
+    DESCRIPTION text,
     --
     primary key (ID)
 )^

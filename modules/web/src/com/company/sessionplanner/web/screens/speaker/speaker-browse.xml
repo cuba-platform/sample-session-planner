@@ -6,7 +6,8 @@
     <data readOnly="true">
         <collection id="speakersDc"
                     class="com.company.sessionplanner.entity.Speaker"
-                    view="speaker-with-photo-browse-view">
+        >
+            <view extends="_local"/>
             <loader id="speakersDl">
                 <query>
                     <![CDATA[select e from sessionplanner_Speaker e]]>
