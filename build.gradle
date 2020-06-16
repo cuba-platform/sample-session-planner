@@ -184,6 +184,13 @@ task buildUberJar(type: CubaUberJarBuilding) {
     logbackConfigurationFile = 'etc/uber-jar-logback.xml'
 }
 
+task buildAwsSource(type: Zip, dependsOn: ['buildUberJar']) {
+    archiveFileName = "${modulePrefix}.zip"
+    destinationDirectory = file("${buildDir}/distributions/aws")
+    from ("aws")
+    from ("${buildDir}/distributions/uberJar")
+}
+
 task buildWar(type: CubaWarBuilding) {
     includeContextXml = true
     includeJdbcDriver = true

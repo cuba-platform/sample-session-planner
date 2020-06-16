@@ -1,0 +1,1 @@
+web: java -Dspring.profiles.active=amazon -jar planner.jar
