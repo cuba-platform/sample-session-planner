@@ -13,7 +13,4 @@ public class SessionEdit extends StandardEditor<Session> {
     public void onInitEntity(InitEntityEvent<Session> event) {
         event.getEntity().setDuration(1);
     }
-
-
-
 }

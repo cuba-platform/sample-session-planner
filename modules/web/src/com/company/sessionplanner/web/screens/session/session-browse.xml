@@ -19,6 +19,11 @@
     </data>
     <dialogMode height="600"
                 width="800"/>
+    <facets>
+        <editorScreen id="sessionEditDialog" container="sessionsDc" editMode="EDIT"
+                      entityClass="com.company.sessionplanner.entity.Session" openMode="DIALOG"
+                      screenClass="com.company.sessionplanner.web.screens.session.SessionEdit"/>
+    </facets>
     <layout
             spacing="true" expand="sessionsTab">
         <filter id="filter"
