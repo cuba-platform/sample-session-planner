@@ -1,4 +1,4 @@
-version: '2'
+version: '3'
 
 services:
   postgres:
@@ -7,13 +7,40 @@ services:
       - POSTGRES_DB=cuba
       - POSTGRES_USER=cuba
       - POSTGRES_PASSWORD=cuba
-    ports:
-      - "5432:5432"
-  web:
+  core_1:
     depends_on:
       - postgres
-    image: planner:jdk11
+    image: planner-core:latest
+    environment:
+      - CUBA_WEBAPPURL=http://abelyaev/planner
+      - CUBA_WEBHOSTNAME=core_1
+      - CUBA_TRUSTEDCLIENTPERMITTEDIPLIST=127.0.0.1, 172.18.*.*
+  core_2:
+    depends_on:
+      - postgres
+    image: planner-core:latest
+    environment:
+      - CUBA_WEBAPPURL=http://abelyaev/planner
+      - CUBA_WEBHOSTNAME=core_2
+      - CUBA_TRUSTEDCLIENTPERMITTEDIPLIST=127.0.0.1, 172.18.*.*
+  web_1:
+    image: planner:latest
+    environment:
+     - CUBA_CONNECTIONURLLIST=http://core_1:8079/planner-core, http://core_2:8079/planner-core
+     - CUBA_WEBHOSTNAME=abelyaev
+     - CUBA_WEBAPPURL=http://abelyaev/planner
+  web_2:
+    image: planner:latest
+    environment:
+      - CUBA_CONNECTIONURLLIST=http://core_1:8079/planner-core, http://core_2:8079/planner-core
+      - CUBA_WEBHOSTNAME=abelyaev
+      - CUBA_WEBAPPURL=http://abelyaev/planner
+  nginx:
+    depends_on:
+      - web_1
+      - web_2
+    image: nginx:latest
     volumes:
-      - /quickstart/planner-home:/opt/planner-home
+    - "c:/demo/nginx/nginx.conf:/etc/nginx/nginx.conf:ro"
     ports:
-      - "80:8080"
+    - "80:80"

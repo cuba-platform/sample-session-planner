@@ -1,17 +1,18 @@
-
 buildscript {
-    ext.cubaVersion = '7.2.4'
+    ext.cubaVersion = '7.2.7'
     repositories {
+        gradlePluginPortal()
         maven {
             url 'https://dl.bintray.com/cuba-platform/main'
-            
+
         }
         jcenter()
 
-        
+
     }
     dependencies {
         classpath "com.haulmont.gradle:cuba-plugin:$cubaVersion"
+        classpath 'com.bmuschko:gradle-docker-plugin:6.4.0'
     }
 }
 
@@ -24,6 +25,9 @@ def webModule = project(":${modulePrefix}-web")
 def servletApi = 'javax.servlet:javax.servlet-api:3.1.0'
 
 apply(plugin: 'cuba')
+apply(plugin: 'com.bmuschko.docker-remote-api')
+
+import com.bmuschko.gradle.docker.tasks.image.*
 
 cuba {
     artifact {
@@ -177,9 +181,6 @@ task restart(dependsOn: ['stop', ":${modulePrefix}-core:deploy", ":${modulePrefi
 restart.finalizedBy start
 
 task buildUberJar(type: CubaUberJarBuilding) {
-    coreJettyEnvPath = 'modules/core/web/META-INF/jetty-env.xml'
-    webPort = 5000
-    singleJar = true
     appProperties = ['cuba.automaticDatabaseUpdate': true]
     logbackConfigurationFile = 'etc/uber-jar-logback.xml'
 }
@@ -187,13 +188,34 @@ task buildUberJar(type: CubaUberJarBuilding) {
 task buildAwsSource(type: Zip, dependsOn: ['buildUberJar']) {
     archiveFileName = "${modulePrefix}.zip"
     destinationDirectory = file("${buildDir}/distributions/aws")
-    from ("aws")
-    from ("${buildDir}/distributions/uberJar")
+    from("aws")
+    from("${buildDir}/distributions/uberJar")
 }
 
-task buildWar(type: CubaWarBuilding) {
-    includeContextXml = true
-    includeJdbcDriver = true
-    singleWar = false
-    appProperties = ['cuba.automaticDatabaseUpdate': true]
+task copyWebUberJar(type: Copy) {
+    dependsOn 'buildUberJar'
+    from "build/distributions/uberJar/${modulePrefix}.jar"
+    into 'docker-image-web'
+}
+
+task copyCoreUberJar(type: Copy) {
+    dependsOn 'buildUberJar'
+    from "build/distributions/uberJar/${modulePrefix}-core.jar"
+    into 'docker-image-core'
+}
+
+task buildWebDockerImage(type: DockerBuildImage) {
+    dependsOn copyWebUberJar
+    inputDir = file('docker-image-web')
+    images.add('planner:latest')
+}
+
+task buildCoreDockerImage(type: DockerBuildImage) {
+    dependsOn copyCoreUberJar
+    inputDir = file('docker-image-core')
+    images.add('planner-core:latest')
+}
+
+task buildAllImages() {
+    dependsOn buildCoreDockerImage, buildWebDockerImage
 }
