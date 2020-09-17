@@ -19,31 +19,37 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="urn:org:jgroups http://www.jgroups.org/schema/jgroups.xsd">
 
-    <!-- UDP based stack -->
+    <TCP bind_port="7800"
+         bind_addr="${jgroups.bind.addr:127.0.0.1}"
+         recv_buf_size="${tcp.recv_buf_size:5M}"
+         send_buf_size="${tcp.send_buf_size:5M}"
+         max_bundle_size="64K"
+         sock_conn_timeout="300"/>
 
-    <UDP mcast_addr="${jgroups.udp.mcast_addr:228.8.8.8}"
-         mcast_port="${jgroups.udp.mcast_port:45588}"
-         tos="8"
-         enable_diagnostics="true"
-         thread_naming_pattern="cl"/>
-    <PING/>
-    <MERGE3 max_interval="30000"
-            min_interval="10000"/>
+    <com.haulmont.addon.zookeeper.jgroups.ConfigurableZooKeeperPing
+            connection="${jgroups.zkping.connection:127.0.0.1:2181}"/>
+    
+    <MERGE3 min_interval="10000"
+            max_interval="30000"/>
     <FD_SOCK/>
-    <FD_ALL/>
+    <FD timeout="3000"
+        max_tries="3"/>
     <VERIFY_SUSPECT timeout="1500"/>
     <BARRIER/>
-    <pbcast.NAKACK2 use_mcast_xmit="true"
-                   discard_delivered_msgs="true"/>
+    <pbcast.NAKACK2 use_mcast_xmit="false"
+                    discard_delivered_msgs="true"/>
     <UNICAST3/>
-    <RSVP resend_interval="2000" timeout="10000"/>
     <pbcast.STABLE stability_delay="1000"
                    desired_avg_gossip="50000"
-                   max_bytes="1M"/>
-    <pbcast.GMS join_timeout="3000"
+                   max_bytes="4M"/>
+    <pbcast.GMS print_local_addr="true"
+                join_timeout="2000"
                 view_bundling="true"/>
-    <MFC max_credits="500K" min_threshold="0.20"/>
+    <MFC max_credits="2M"
+         min_threshold="0.4"/>
     <FRAG2 frag_size="60K"/>
+    <RSVP resend_interval="2000"
+          timeout="10000"/>
     <pbcast.STATE_TRANSFER/>
 
 </config>
