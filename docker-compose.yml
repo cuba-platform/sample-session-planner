@@ -1,12 +1,46 @@
 version: '3'
 
 services:
-  postgres:
-    image: postgres:alpine
+  postgres-1:
+    image: bitnami/postgresql-repmgr:11
     environment:
-      - POSTGRES_DB=cuba
-      - POSTGRES_USER=cuba
-      - POSTGRES_PASSWORD=cuba
+      - POSTGRESQL_POSTGRES_PASSWORD=cuba
+      - POSTGRESQL_USERNAME=cuba
+      - POSTGRESQL_PASSWORD=cuba
+      - POSTGRESQL_DATABASE=cuba
+      - REPMGR_PASSWORD=repmgrpassword
+      - REPMGR_PRIMARY_HOST=postgres-1
+      - REPMGR_PARTNER_NODES=postgres-1,postgres-2
+      - REPMGR_NODE_NAME=postgres-1
+      - REPMGR_NODE_NETWORK_NAME=postgres-1
+  postgres-2:
+    image: bitnami/postgresql-repmgr:11
+    environment:
+      - POSTGRESQL_POSTGRES_PASSWORD=cuba
+      - POSTGRESQL_USERNAME=cuba
+      - POSTGRESQL_PASSWORD=cuba
+      - POSTGRESQL_DATABASE=cuba
+      - REPMGR_PASSWORD=repmgrpassword
+      - REPMGR_PRIMARY_HOST=postgres-1
+      - REPMGR_PARTNER_NODES=postgres-1,postgres-2
+      - REPMGR_NODE_NAME=postgres-2
+      - REPMGR_NODE_NETWORK_NAME=postgres-2
+  postgres:
+    image: bitnami/pgpool:latest
+    environment:
+      - PGPOOL_BACKEND_NODES=0:postgres-1:5432,1:postgres-2:5432
+      - PGPOOL_SR_CHECK_USER=cuba
+      - PGPOOL_SR_CHECK_PASSWORD=cuba
+      - PGPOOL_ENABLE_LDAP=no
+      - PGPOOL_POSTGRES_USERNAME=cuba
+      - PGPOOL_POSTGRES_PASSWORD=cuba
+      - PGPOOL_ADMIN_USERNAME=admin
+      - PGPOOL_ADMIN_PASSWORD=cuba
+    healthcheck:
+      test: [ "CMD", "/opt/bitnami/scripts/pgpool/healthcheck.sh" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
   core_1:
     depends_on:
       - postgres
